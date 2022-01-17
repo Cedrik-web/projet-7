@@ -1,7 +1,7 @@
 import csv
 
 
-# initialise le budget maximun client
+# initialise le budget maximun client et le chemin du fichier d'action
 CLIENT_BUDGET = 500.00
 ROOT_CSV = "action.csv"
 
@@ -114,7 +114,7 @@ def choice_best_list(list1, list2):
 
 def add_customer_basket():
     """appel des fonctions necessaire pour la creation d'un panier d'action avec un budget
-    pre_défini calibré sur le meilleur profit et affiche en console le resultat"""
+    pre_défini, calibré sur le meilleur profit et affiche en console le resultat"""
 
     list_action = recovery_action_list()
     list_action2 = recovery_action_list()

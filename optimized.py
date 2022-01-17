@@ -1,7 +1,7 @@
 import csv
 
 
-# initialise le budget maximun client
+# initialise le budget maximun client et les chemins des fichiers d'actions
 CLIENT_BUDGET = 500.00
 ROOT_CSV = "dataset2_Python+P7.csv"
 ROOT_XLS = "int_courts_naf_rev_2.xls"
