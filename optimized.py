@@ -3,8 +3,7 @@ import csv
 
 # initialise le budget maximun client et les chemins des fichiers d'actions
 CLIENT_BUDGET = 500.00
-ROOT_CSV = "dataset2_Python+P7.csv"
-ROOT_XLS = "int_courts_naf_rev_2.xls"
+ROOT_CSV = "fichier_d_action/dataset2_Python+P7.csv"
 
 
 def recovery_action_list():
@@ -142,5 +141,5 @@ def add_customer_basket():
     print("\ncout et profit de ce panier :\n", valeur_profit, "\n")
 
 
-# appel defonction
+# appel de fonction
 add_customer_basket()

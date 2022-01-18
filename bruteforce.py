@@ -3,7 +3,7 @@ import csv
 
 # initialise le budget maximun client et le chemin du fichier d'action
 CLIENT_BUDGET = 500.00
-ROOT_CSV = "action.csv"
+ROOT_CSV = "fichier_d_action/action.csv"
 
 
 def recovery_action_list():

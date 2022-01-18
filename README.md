@@ -31,3 +31,14 @@ Mise en place du programmme:
         sur windows :              python optimized.py	
 		sur mac ou Unix :          python3 optimized.py
 		
+
+
+Cas particulier:
+
+    
+    Pour lancer l'algorithme sur un nouveaux fichier csv vous devez :
+        
+        - Mettre le fichier dans le fichier_d_action 
+        - Dans le script choisit rentrer le nom du fichier dans la constante
+                ROOT_CSV = fichier_d_action/"nom du nouveau fichier"
+        - Puis procéder comme à l'étape 3 précédente
