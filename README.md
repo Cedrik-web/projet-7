@@ -38,7 +38,7 @@ Cas particulier:
     
     Pour lancer l'algorithme sur un nouveaux fichier csv vous devez :
         
-        - Mettre le fichier dans le fichier_d_action 
+        - Mettre le fichier dans le dossier fichier_d_action 
         - Dans le script choisit rentrer le nom du fichier dans la constante
                 ROOT_CSV = fichier_d_action/"nom du nouveau fichier"
         - Puis procéder comme à l'étape 3 précédente
