@@ -67,7 +67,9 @@ def sort_list_by_profit_value(tab):
 
     for i in range(n):
         for j in range(0, n - i - 1):
+            print("ligne 71:", j)
             if tab[j + 1] < tab[j]:
+                print("ligne 73:", tab[j])
                 tab[j + 1], tab[j] = tab[j], tab[j + 1]
 
     for i in tab:
