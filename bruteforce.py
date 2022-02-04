@@ -65,9 +65,6 @@ def add_customer_basket():
 
     panier = sort_list_by_profit(tab)
 
-    print("\nrecherche de la meilleur combinaison")
-    print("merci de patienter ...\n")
-
     print_statistique_panier(panier)
 
 
@@ -77,7 +74,8 @@ def print_statistique_panier(data):
     valeur_profit = 0
     cout_action = 0
 
-    print("\nliste d' actions pour le meilleurs randement :\n")
+    print("\nAnalyse du fichier : ", ROOT_CSV.replace("fichier_d_action/", ""), "\n")
+    print("\npanier d' actions pour la meilleure rentabilitée :\n")
 
     for i in data:
         v = i[1]

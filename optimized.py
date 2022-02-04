@@ -25,14 +25,28 @@ def recovery_action_list():
     return list_action
 
 
+def selector_list_action(data):
+    """enleve de la liste des actions a valeur inferieur ou égal à 0"""
+
+    tab = {k:v for k, v in data.items() if v.get("profit_valeur") > 0 }
+    return tab
+
+
 def tri_list(data):
-    """tri les liste sur la profit en valeur en ordre decroissant"""
+    """tri la liste sur la clé 'profit en valeur' en ordre décroissant"""
 
     tableau_trier = sorted(data.items(), key=lambda k:k[1]["profit_valeur"], reverse = True)
     return tableau_trier
 
 
-def sort_list_by_profit(tab):
+def tri_list_pourcentage(data):
+    """tri la liste sur clé  'profit en pourcentage' en ordre décroissant"""
+
+    tableau_trier = sorted(data.items(), key=lambda k: k[1]["profit"], reverse=True)
+    return tableau_trier
+
+
+def sort_list(tab):
     """algorithme de style glouton itère sur la liste tab et ajoute dans le panier les actions
         selectionner, s'arrête quand le montant du panier à atteint la valeur du budget client"""
 
@@ -41,11 +55,11 @@ def sort_list_by_profit(tab):
     cout_panier = 0
     liste_action = []
 
-    while panier > 0:
-        for i in tab:
-            v = i[1]
-            cout_action = v.get("price")
-            valeur = v.get("profit_valeur")
+    for i in tab:
+        v = i[1]
+        cout_action = v.get("price")
+        valeur = v.get("profit_valeur")
+        if panier > 0:
             if cout_action > panier:
                 pass
             else:
@@ -56,24 +70,25 @@ def sort_list_by_profit(tab):
     return liste_action
 
 
-def add_customer_basket():
-    """appel des fonctions necessaire pour la creation d'un panier d'action avec un budget
-    pre_défini, calibré sur le meilleur profit"""
+def valeur_panier(data):
+    """retourne la valeur des actions du panier"""
 
-    data = recovery_action_list()
-    tab = tri_list(data)
+    valeur_profit = 0
 
-    print("\ngénération des combinaisons")
-    print("merci de patienter ...\n")
-    print()
+    for i in data:
+        v = i[1]
+        profit = v.get("profit_valeur")
+        valeur_profit += profit
+    return valeur_profit
 
-    panier = sort_list_by_profit(tab)
 
-    print("\nvaleurisation des combinaisons")
-    print("merci de patienter ...\n")
-    print()
+def selection_panier(data , data2):
+    """choisit le panier le plus rentable"""
 
-    print_statistique_panier(panier)
+    if valeur_panier(data) > valeur_panier(data2):
+        return data
+    else:
+        return data2
 
 
 def print_statistique_panier(data):
@@ -82,7 +97,7 @@ def print_statistique_panier(data):
     valeur_profit = 0
     cout_action = 0
 
-    print("\n\nliste d' actions pour le meilleurs randement :\n")
+    print("\nliste d' actions pour le meilleurs randement :\n")
 
     for i in data:
         v = i[1]
@@ -92,8 +107,28 @@ def print_statistique_panier(data):
         cout_action += cout
         print(i[0])
 
-    print("\ncout de ce panier :\n", cout_action, "€\n")
-    print("profit de ce panier :\n", valeur_profit, "€\n\n")
+    print("\ncout de ce panier  : ", cout_action, "€\n")
+    print("profit de ce panier : ", valeur_profit, "€\n\n")
+
+
+def add_customer_basket():
+    """appel des fonctions necessaire pour la creation d'un panier d'action avec un budget
+    pre_défini, calibré sur le meilleur profit"""
+
+    list = recovery_action_list()
+    data = selector_list_action(list)
+    tab = tri_list(data)
+    tab2 = tri_list_pourcentage(data)
+
+    panier = sort_list(tab)
+    panier2 = sort_list(tab2)
+
+    best_panier = selection_panier(panier, panier2)
+
+    print("\nvaleurisation du meilleur panier d'actions")
+    print("pour le fichier : ", ROOT_CSV.replace("fichier_d_action/", ""))
+
+    print_statistique_panier(best_panier)
 
 
 # appel de fonction
