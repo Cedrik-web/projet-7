@@ -1,4 +1,7 @@
 import csv
+from itertools import permutations
+from tqdm import tqdm
+from time import sleep
 
 
 # initialise le budget maximun client et le chemin de fichier d'action
@@ -25,14 +28,7 @@ def recovery_action_list():
     return list_action
 
 
-def tri_list(data):
-    """tri les liste sur la profit en valeur en ordre decroissant"""
-
-    tableau_trier = sorted(data.items(), key=lambda k:k[1]["profit_valeur"], reverse = True)
-    return tableau_trier
-
-
-def sort_list_by_profit(tab):
+def sort_list(tab):
     """algorithme de style glouton itère sur la liste tab et ajoute dans le panier les actions
         selectionner, s'arrête quand le montant du panier à atteint la valeur du budget client"""
 
@@ -40,20 +36,45 @@ def sort_list_by_profit(tab):
     benefice_panier = 0
     cout_panier = 0
     liste_action = []
+    panier_action = []
 
-    while panier > 0:
-        for i in tab:
-            v = i[1]
+    conbinaison = permutations(tab.items(), len(tab))
+    print()
+
+    for list, i in zip(conbinaison, tqdm(range(100))):
+        for action in list:
+            v = action[1]
             cout_action = v.get("price")
             valeur = v.get("profit_valeur")
-            if cout_action > panier:
-                pass
+            if valeur_panier(panier_action) == None:
+                panier_action.append(action)
             else:
-                panier -= cout_action
-                liste_action.append(i)
-                benefice_panier += valeur
-                cout_panier += cout_action
-    return liste_action
+                if panier > 0:
+                    if cout_action > panier:
+                        if valeur_panier(liste_action) > valeur_panier(panier_action):
+                            panier_action = liste_action
+                        else:
+                            pass
+                    else:
+                        panier -= cout_action
+                        liste_action.append(action)
+                        benefice_panier += valeur
+                        cout_panier += cout_action
+        sleep(0.1)
+
+    return panier_action
+
+
+def valeur_panier(data):
+    """retourne la valeur des actions du panier"""
+
+    valeur_profit = 0
+
+    for i in data:
+        v = i[1]
+        profit = v.get("profit_valeur")
+        valeur_profit += profit
+    return valeur_profit
 
 
 def add_customer_basket():
@@ -61,9 +82,8 @@ def add_customer_basket():
     pre_défini, calibré sur le meilleur profit"""
 
     data = recovery_action_list()
-    tab = tri_list(data)
 
-    panier = sort_list_by_profit(tab)
+    panier = sort_list(data)
 
     print_statistique_panier(panier)
 
