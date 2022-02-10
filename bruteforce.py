@@ -1,7 +1,9 @@
 import csv
-from itertools import permutations
+from itertools import permutations, combinations
 from tqdm import tqdm
 from time import sleep
+from math import factorial
+import os
 
 
 # initialise le budget maximun client et le chemin de fichier d'action
@@ -28,41 +30,85 @@ def recovery_action_list():
     return list_action
 
 
+def control_budget_total_action(data):
+    """controle si la valeur globale des actions est plus grande que le budget client"""
+
+    price = 0
+
+    for k, v  in data.items():
+        price_action = v.get("price")
+        price += price_action
+
+    if price >= CLIENT_BUDGET:
+        return True
+
+
 def sort_list(tab):
-    """algorithme de style glouton itère sur la liste tab et ajoute dans le panier les actions
-        selectionner, s'arrête quand le montant du panier à atteint la valeur du budget client"""
+    """initialise les compteurs et autres variables necessaires, compte les monbres d'actions quand
+        celui ci est inferieur à 13 renvoie sur une fonction qui itere sur la listes de permutations
+        et autrement renvoie sur une fonction qui itere sur la listes de conbinaisons"""
 
-    panier = CLIENT_BUDGET
-    benefice_panier = 0
-    cout_panier = 0
-    liste_action = []
     panier_action = []
+    compteur = 0
+    conb = len(tab)
+    # definie la longueur de des listes d'actions reduit la liste afin de reduire le monbre de permutations possible
+    longueur_liste = int(conb - (conb / 4))
+    permu = permutations(tab.items(), conb)
+    tab_tri = tri_list(tab)
+    conbinaisons = combinations(tab_tri.items(), longueur_liste)
+    comptage = combinations(tab_tri , longueur_liste)
+    total = factorial(conb)
 
-    conbinaison = permutations(tab.items(), len(tab))
-    print()
+    if conb < 13:
+        os.system("clear")
+        print("Python va générer et comparer " + str(total) + " toutes les permutations d'actions possible , merci de patienter ...\n")
 
-    for list, i in zip(conbinaison, tqdm(range(100))):
-        for action in list:
-            v = action[1]
-            cout_action = v.get("price")
-            valeur = v.get("profit_valeur")
-            if valeur_panier(panier_action) == None:
-                panier_action.append(action)
-            else:
-                if panier > 0:
-                    if cout_action > panier:
-                        if valeur_panier(liste_action) > valeur_panier(panier_action):
-                            panier_action = liste_action
-                        else:
-                            pass
-                    else:
-                        panier -= cout_action
-                        liste_action.append(action)
-                        benefice_panier += valeur
-                        cout_panier += cout_action
-        sleep(0.1)
+        for liste, i in zip(permu, tqdm(range(int(0), int(total)))):
+            panier_action = take_panier(liste,panier_action, conb)
+    else:
+        for _ in comptage:
+            compteur += 1
+
+        os.system("clear")
+        print("Python va générer et comparer " + str(compteur) + " conbinaison d'actions, merci de patienter ...\n")
+
+        for liste, i in zip(conbinaisons, tqdm(range(compteur))):
+            panier_action = take_panier(liste, panier_action, longueur_liste)
+            sleep(0.001)
 
     return panier_action
+
+
+def take_panier(data, paniers, longueur_list):
+    """itere sur la liste d'actions et retourne le panier d'actions le plus rentable"""
+
+    panier_action = paniers
+    panier = CLIENT_BUDGET
+    benefice_panier = 0
+    liste_action = []
+    cout_panier = 0
+
+    for count, action in enumerate(data):
+        v = action[1]
+        cout_action = v.get("price")
+        valeur = v.get("profit_valeur")
+        if cout_action > panier:
+            if valeur_panier(liste_action) > valeur_panier(panier_action):
+                panier_action = liste_action
+                return panier_action
+            else:
+                return panier_action
+        elif count == longueur_list -1:
+            if valeur_panier(liste_action) > valeur_panier(panier_action):
+                panier_action = liste_action
+                return panier_action
+            else:
+                return panier_action
+        else:
+            panier -= cout_action
+            liste_action.append(action)
+            benefice_panier += valeur
+            cout_panier += cout_action
 
 
 def valeur_panier(data):
@@ -77,27 +123,40 @@ def valeur_panier(data):
     return valeur_profit
 
 
+def tri_list(data):
+    """tri la liste sur la clé 'profit en valeur' en ordre décroissant"""
+
+    tableau = sorted(data.items(), key=lambda k:k[1]["profit_valeur"], reverse = True)
+    tableau_trier = {}
+    for i in tableau:
+        tableau_trier[i[0]] =  i[1]
+    return tableau_trier
+
+
 def add_customer_basket():
     """appel des fonctions necessaire pour la creation d'un panier d'action avec un budget
     pre_défini, calibré sur le meilleur profit"""
 
     data = recovery_action_list()
+    data_control = control_budget_total_action(data)
+    if data_control == True:
+        panier = sort_list(data)
+        print_statistique_panier(panier)
+    else:
+        os.system("clear")
+        print("\nle budget client permet d'acheter toutes les actions de cette liste.\n")
 
-    panier = sort_list(data)
 
-    print_statistique_panier(panier)
-
-
-def print_statistique_panier(data):
+def print_statistique_panier(panier):
     """affichage du détails du panier d'actions choisit par l'algorithme"""
 
     valeur_profit = 0
     cout_action = 0
 
     print("\nAnalyse du fichier : ", ROOT_CSV.replace("fichier_d_action/", ""), "\n")
-    print("\npanier d' actions pour la meilleure rentabilitée :\n")
+    print("\npanier d'actions pour la meilleure rentabilitée :\n")
 
-    for i in data:
+    for i in panier:
         v = i[1]
         profit = v.get("profit_valeur")
         cout = v.get("price")
@@ -111,7 +170,6 @@ def print_statistique_panier(data):
 
 # appel de fonction
 add_customer_basket()
-
 
 
 
